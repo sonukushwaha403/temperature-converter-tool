@@ -1,0 +1,88 @@
+package sample;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
+import javafx.scene.control.ChoiceBox;
+import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.scene.control.Button;
+
+public class controller implements Initializable {
+	@FXML
+	public Label welcomeLable;
+	@FXML
+	public ChoiceBox<String> choiseBox;
+	@FXML
+	public TextField userInputField;
+	@FXML
+	public Button convertButton;
+
+	private static final String c2f = "Celsius to fahrenheit";
+	private static final String f2c = "fahrenheit to Celsius";
+	private boolean isc2f = true;
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		choiseBox.getItems().add(c2f);
+		choiseBox.getItems().add(f2c);
+
+		choiseBox.setValue("Celsius to fahrenheit");
+		choiseBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+
+			if (newValue.equals(c2f)) {
+				isc2f = true;
+			} else {
+				isc2f = false;
+			}
+		});
+		convertButton.setOnAction(event -> {
+			convert();
+		});
+	}
+
+	private void convert() {
+		String input = userInputField.getText();
+
+		float enteredtemperature = 0.0f;
+		try {
+			enteredtemperature = Float.parseFloat(input);
+
+		} catch (Exception ex) {
+			warnUser();
+			return;
+		}
+		float newTemperature = 0.0f;
+		if (isc2f) {
+			newTemperature = (enteredtemperature * 9 / 5) + 32;
+		} else {
+			newTemperature = (enteredtemperature - 32) * 5 / 9;
+		}
+		display(newTemperature);
+	}
+
+	private void warnUser() {
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.setTitle("Error occured");
+		alert.setHeaderText("Invalid Temperature Entered");
+		alert.setContentText("Please Enter a Valid Temperature");
+		alert.show();
+
+	}
+
+	private void display(float newTemperature) {
+		String unit = isc2f ? "f" : "c";
+		System.out.println("The New Temperature is :" + newTemperature + unit);
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle("Result");
+		alert.setContentText("The New Temperature is  :" + newTemperature + unit);
+		alert.show();
+	}
+
+}
